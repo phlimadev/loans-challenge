@@ -30,6 +30,12 @@ public class LoanService {
         }
     }
 
+    public void assessIfTheSalaryIsEqualOrGreaterThan5000(BigDecimal income) {
+        if (income.compareTo(BigDecimal.valueOf(5000)) >= 0) {
+            loans.add(LoanEnum.CONSIGNMENT);
+        }
+    }
+
     public CustomerLoansDTO evaluateLoanRequest(CustomerDTO data) {
         Integer age = data.age();
         BigDecimal income = data.income();
@@ -39,5 +45,7 @@ public class LoanService {
         if (assessWhetherTheSalarIsBetween3000And5000(income)) {
             assessAgeAndLocation(age, location);
         }
+
+        assessIfTheSalaryIsEqualOrGreaterThan5000(income);
     }
 }
