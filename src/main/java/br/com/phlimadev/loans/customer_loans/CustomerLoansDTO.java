@@ -1,11 +1,11 @@
 package br.com.phlimadev.loans.customer_loans;
 
-import br.com.phlimadev.loans.loan.LoanEnum;
+import br.com.phlimadev.loans.loan.LoanDTO;
 
-import java.util.List;
+import java.util.Set;
 
 public record CustomerLoansDTO(
         String customer,
-        List<LoanEnum> loans
+        Set<LoanDTO> loans
 ) {
 }

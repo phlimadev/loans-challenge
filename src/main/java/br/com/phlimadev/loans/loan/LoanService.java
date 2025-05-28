@@ -5,47 +5,49 @@ import br.com.phlimadev.loans.customer_loans.CustomerLoansDTO;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Service
 public class LoanService {
-    private List<LoanEnum> loans = new ArrayList<>();
 
-    public void assessWhetherTheSalaryIsEqualToOrLessThan3000(BigDecimal income) {
+    public void assessWhetherTheSalaryIsEqualToOrLessThan3000(BigDecimal income, Set<LoanDTO> loans) {
         if (income.compareTo(BigDecimal.valueOf(3000)) <= 0) {
-            loans.add(LoanEnum.PERSONAL);
-            loans.add(LoanEnum.GUARANTEED);
+            loans.add(new LoanDTO(LoanEnum.PERSONAL.getType(), LoanEnum.PERSONAL.getInterestRate()));
+            loans.add(new LoanDTO(LoanEnum.GUARANTEED.getType(), LoanEnum.GUARANTEED.getInterestRate()));
         }
     }
 
-    public boolean assessWhetherTheSalarIsBetween3000And5000(BigDecimal income) {
+    public boolean assessWhetherTheSalaryIsBetween3000And5000(BigDecimal income) {
         return income.compareTo(BigDecimal.valueOf(3000)) > 0 && income.compareTo(BigDecimal.valueOf(5000)) <= 0;
     }
 
-    public void assessAgeAndLocation(Integer age, String location) {
+    public void assessAgeAndLocation(Integer age, String location, Set<LoanDTO> loans) {
         if (age < 30 && location.equalsIgnoreCase("SP")) {
-            loans.add(LoanEnum.PERSONAL);
-            loans.add(LoanEnum.GUARANTEED);
+            loans.add(new LoanDTO(LoanEnum.PERSONAL.getType(), LoanEnum.PERSONAL.getInterestRate()));
+            loans.add(new LoanDTO(LoanEnum.GUARANTEED.getType(), LoanEnum.GUARANTEED.getInterestRate()));
         }
     }
 
-    public void assessIfTheSalaryIsEqualOrGreaterThan5000(BigDecimal income) {
+    public void assessIfTheSalaryIsEqualOrGreaterThan5000(BigDecimal income, Set<LoanDTO> loans) {
         if (income.compareTo(BigDecimal.valueOf(5000)) >= 0) {
-            loans.add(LoanEnum.CONSIGNMENT);
+            loans.add(new LoanDTO(LoanEnum.CONSIGNMENT.getType(), LoanEnum.CONSIGNMENT.getInterestRate()));
         }
     }
 
     public CustomerLoansDTO evaluateLoanRequest(CustomerDTO data) {
+        Set<LoanDTO> loans = new HashSet<>();
+
         Integer age = data.age();
         BigDecimal income = data.income();
         String location = data.location();
 
-        assessWhetherTheSalaryIsEqualToOrLessThan3000(income);
-        if (assessWhetherTheSalarIsBetween3000And5000(income)) {
-            assessAgeAndLocation(age, location);
+        assessWhetherTheSalaryIsEqualToOrLessThan3000(income, loans);
+        if (assessWhetherTheSalaryIsBetween3000And5000(income)) {
+            assessAgeAndLocation(age, location, loans);
         }
 
-        assessIfTheSalaryIsEqualOrGreaterThan5000(income);
+        assessIfTheSalaryIsEqualOrGreaterThan5000(income, loans);
+        return new CustomerLoansDTO(data.name(), loans);
     }
 }
